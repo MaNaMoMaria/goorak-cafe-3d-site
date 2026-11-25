@@ -1,179 +1,333 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GOORAK — Cafe • Gallery • Atelier</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body class="lights-off mood-rose">
-  <audio id="ambient-audio" loop preload="none">
-    <source src="background-music.mp3" type="audio/mpeg" />
-  </audio>
+:root {
+  --bg: #12150f;
+  --olive-mid: #3d4a31;
+  --cream: #E8DEC8;
+  --cream-muted: rgba(232, 222, 200, 0.74);
+  --gold: #D4AF37;
+  --glass: rgba(20, 24, 16, 0.78);
+  --border: rgba(212, 175, 55, 0.34);
+  --glow: rgba(255, 196, 112, 0.08);
+  --font-fa: 'Vazirmatn', sans-serif;
+  --font-en-display: 'Cormorant Garamond', Georgia, serif;
+  --font-en-body: 'Plus Jakarta Sans', sans-serif;
+}
 
-  <header class="topbar">
-    <a href="#stage" class="brand-box">
-      <img src="images/logo.png" alt="GOORAK" class="brand-logo" onerror="this.style.display='none'" />
-      <div>
-        <span class="brand-title">GOORAK</span>
-        <span class="brand-sub">CAFE • GALLERY • KANGAN</span>
-      </div>
-    </a>
+body.mood-cool    { --glow: rgba(245, 185, 95, 0.14); }
+body.mood-saffron { --glow: rgba(245, 166, 56, 0.14); }
+body.mood-rose    { --glow: rgba(224, 130, 120, 0.12); }
 
-    <div class="top-controls">
-      <button id="light-switch-btn" class="light-btn" type="button">
-        <span id="light-icon">💡</span>
-        <span id="light-label" data-i18n="light_on">روشن کردن چراغ</span>
-      </button>
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-      <button id="sound-btn" class="icon-pill" type="button" title="Sound">♪</button>
-      <button id="lang-btn" class="icon-pill" type="button">EN</button>
-    </div>
-  </header>
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 65% 28%, #2e3a24 0%, #151a11 65%, #0c0f0a 100%);
+  color: var(--cream);
+  font-family: var(--font-fa);
+  overflow-x: hidden;
+  transition: background 0.6s ease;
+}
 
-  <aside class="studio-nav">
-    <button class="nav-item active" data-view="stage" type="button">
-      <span>🏛️</span>
-      <span data-i18n="nav_stage">فضای کافه و چراغ</span>
-    </button>
-    <button class="nav-item" data-view="menu" type="button">
-      <span>🍵</span>
-      <span data-i18n="nav_menu">منوی نوشیدنی و آماده</span>
-    </button>
-    <button class="nav-item" data-view="shop" type="button">
-      <span>👜</span>
-      <span data-i18n="nav_shop">فروشگاه دست‌ساز</span>
-    </button>
-    <button class="nav-item" data-view="reserve" type="button">
-      <span>🕯️</span>
-      <span data-i18n="nav_reserve">رزرو مهمانی و نشانی</span>
-    </button>
-  </aside>
+body.lights-on {
+  background: radial-gradient(circle at 65% 25%, #4d5d3d 0%, #2c3723 58%, #1a2114 100%);
+  --glow: rgba(255, 204, 120, 0.34);
+}
 
-  <main class="workspace">
-    <section id="view-stage" class="view-panel active">
-      <div class="stage-topbar">
-        <div>
-          <p class="eyebrow" data-i18n="stage_eyebrow">ورود به کافه و گالری گوراک</p>
-          <h1 class="stage-title" data-i18n="stage_title">چراغ را روشن کنید و وارد فضا شوید</h1>
-        </div>
+html[lang="en"] body { font-family: var(--font-en-body); }
+html[lang="en"] h1, html[lang="en"] h2, html[lang="en"] .brand-title { font-family: var(--font-en-display); }
 
-        <div class="mood-pills">
-          <button class="mood-btn active" data-mood="rose" data-i18n="mood_rose">گل محمدی و شکلات</button>
-          <button class="mood-btn" data-mood="saffron" data-i18n="mood_saffron">زعفران و هل</button>
-          <button class="mood-btn" data-mood="neroli" data-i18n="mood_neroli">بهارنارنج آرامش</button>
-        </div>
-      </div>
+.topbar {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 60;
+  height: 72px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
 
-      <!-- Real Photo Stage with Interactive Lamp Glow -->
-      <div id="photo-stage" class="photo-stage" title="Click to toggle lamp">
-        <img
-          src="images/cafe-stage.jpg"
-          alt="GOORAK Cafe and Gallery"
-          class="stage-photo"
-          onerror="this.src='https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1400&q=80'"
-        />
-        <div class="lamp-glow-layer"></div>
-        <div class="stage-caption-bar">
-          <strong id="stage-mood-title">هات‌چاکلت گل محمدی</strong>
-          <span id="stage-mood-desc">دلگرم‌کننده برای عصرهای آرام و گفت‌وگو در گالری.</span>
-        </div>
-      </div>
+.brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--cream); }
+.brand-logo { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); }
+.brand-title { display: block; font-weight: 800; letter-spacing: 0.16em; font-size: 1rem; line-height: 1.1; }
+.brand-sub { display: block; font-size: 0.62rem; letter-spacing: 0.18em; color: var(--gold); margin-top: 2px; }
 
-      <div class="carousel-strip">
-        <div class="carousel-track" id="carousel-track"></div>
-      </div>
-    </section>
+.top-controls { display: flex; align-items: center; gap: 10px; }
 
-    <section id="view-menu" class="view-panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow" data-i18n="menu_eyebrow">منوی QR روی میز</p>
-          <h2 data-i18n="menu_title">نوشیدنی‌ها، دمنوش‌ها و آیتم‌های آماده</h2>
-        </div>
-        <div class="chips" id="menu-chips">
-          <button class="chip active" data-filter="all" data-i18n="all">همه</button>
-          <button class="chip" data-filter="infusion" data-i18n="f_infusion">دمنوش و خواص</button>
-          <button class="chip" data-filter="cocoa" data-i18n="f_cocoa">هات‌چاکلت و قهوه</button>
-          <button class="chip" data-filter="ready" data-i18n="f_ready">کیک و آماده</button>
-        </div>
-      </div>
-      <div id="menu-grid" class="cards-grid"></div>
-    </section>
+.light-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--gold);
+  background: rgba(212, 175, 55, 0.14);
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
 
-    <section id="view-shop" class="view-panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow" data-i18n="shop_eyebrow">گالری و بوتیک دست‌ساز</p>
-          <h2 data-i18n="shop_title">لباس، کیف و کفش دست‌ساز</h2>
-        </div>
-        <div class="chips" id="shop-chips">
-          <button class="chip active" data-shop="all" data-i18n="all">همه</button>
-          <button class="chip" data-shop="clothes" data-i18n="s_clothes">لباس</button>
-          <button class="chip" data-shop="bags" data-i18n="s_bags">کیف</button>
-          <button class="chip" data-shop="shoes" data-i18n="s_shoes">کفش</button>
-        </div>
-      </div>
-      <div id="shop-grid" class="cards-grid"></div>
-    </section>
+body.lights-on .light-btn {
+  background: var(--gold);
+  color: #14170f;
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.45);
+}
 
-    <section id="view-reserve" class="view-panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow" data-i18n="res_eyebrow">میزبان دورهمی‌های خاص</p>
-          <h2 data-i18n="res_title">رزرو مهمانی و نشانی گوراک</h2>
-        </div>
-      </div>
+.icon-pill {
+  padding: 8px 13px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
 
-      <div class="reserve-split">
-        <form id="party-form" class="glass-form">
-          <label data-i18n="lbl_name">نام شما</label>
-          <input id="p-name" type="text" required />
+.studio-nav {
+  position: fixed;
+  top: 92px;
+  inset-inline-start: 20px;
+  z-index: 50;
+  width: 215px;
+  padding: 14px;
+  border-radius: 20px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-          <div class="row-2">
-            <div>
-              <label data-i18n="lbl_date">تاریخ و ساعت</label>
-              <input id="p-date" type="text" required />
-            </div>
-            <div>
-              <label data-i18n="lbl_guests">تعداد مهمان</label>
-              <input id="p-guests" type="number" min="2" max="50" value="10" required />
-            </div>
-          </div>
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: start;
+  transition: all 0.22s ease;
+}
 
-          <label data-i18n="lbl_notes">نوع مهمانی یا سفارش</label>
-          <textarea id="p-notes" rows="3"></textarea>
+.nav-item.active, .nav-item:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: var(--gold);
+}
 
-          <button type="submit" class="gold-btn" data-i18n="btn_wa">ارسال درخواست رزرو در واتساپ</button>
-        </form>
+.workspace {
+  padding: 92px 24px 40px;
+  padding-inline-start: 256px;
+}
 
-        <div class="location-box">
-          <p class="body-soft" data-i18n="loc_desc">کنگان • کافه، گالری هنری و بوتیک دست‌ساز گوراک</p>
-          <div class="map-wrap">
-            <iframe
-              id="gmap-embed"
-              title="Goorak Cafe Gallery Google Map"
-              src="https://www.google.com/maps?q=Kangan,Bushehr&output=embed"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
-          </div>
-          <a id="gmap-link" href="https://maps.google.com/?q=Kangan,Bushehr" target="_blank" rel="noopener" class="ghost-link" data-i18n="open_maps">باز کردن در گوگل مپ ↗</a>
-        </div>
-      </div>
-    </section>
-  </main>
+.view-panel { display: none; animation: fadeIn 0.35s ease; }
+.view-panel.active { display: block; }
 
-  <div id="detail-modal" class="modal hidden" onclick="if(event.target===this) closeDetailModal()">
-    <div class="modal-card">
-      <button class="modal-close" onclick="closeDetailModal()" type="button">✕</button>
-      <div id="modal-body"></div>
-    </div>
-  </div>
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-  <script type="module" src="app.js"></script>
-</body>
-</html>
+.stage-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.eyebrow { font-size: 0.75rem; letter-spacing: 0.14em; color: var(--gold); margin-bottom: 4px; }
+.stage-title, .panel-head h2 { font-size: clamp(1.4rem, 2.4vw, 2.1rem); font-weight: 700; }
+
+.mood-pills, .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.mood-btn, .chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mood-btn.active, .chip.active {
+  background: var(--gold);
+  color: #151810;
+  border-color: var(--gold);
+  font-weight: 700;
+}
+
+/* Stage Video / Photo */
+.photo-stage {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  height: 460px;
+  margin-inline: auto;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.stage-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.76) contrast(1.05);
+  transition: filter 0.6s ease;
+}
+
+body.lights-on .stage-media {
+  filter: brightness(1.04) contrast(1.08);
+}
+
+.lamp-glow-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 42%, var(--glow), rgba(10, 13, 8, 0.45) 78%);
+  transition: background 0.6s ease;
+}
+
+.stage-caption-bar {
+  position: absolute;
+  bottom: 16px;
+  inset-inline: 18px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(16, 20, 13, 0.82);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(232, 222, 200, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stage-caption-bar strong { color: var(--gold); font-size: 0.94rem; }
+.stage-caption-bar span { color: var(--cream-muted); font-size: 0.82rem; }
+
+.carousel-strip { margin-top: 22px; }
+.carousel-track { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+
+.showcase-card {
+  border-radius: 18px;
+  padding: 14px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.showcase-card:hover { transform: translateY(-4px); border-color: var(--cream); }
+.showcase-card .tag { font-size: 0.7rem; color: var(--gold); display: block; margin-bottom: 4px; }
+.showcase-card h3 { font-size: 0.96rem; margin-bottom: 4px; }
+.showcase-card p { font-size: 0.78rem; color: var(--cream-muted); }
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; }
+
+.item-card {
+  border-radius: 20px;
+  padding: 18px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+.item-card:hover { transform: translateY(-3px); border-color: var(--cream); }
+.item-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.item-title { font-size: 1rem; font-weight: 700; }
+.item-price { font-size: 0.88rem; color: var(--gold); font-weight: 700; white-space: nowrap; }
+.item-desc { font-size: 0.84rem; color: var(--cream-muted); margin-top: 6px; }
+.item-meta { font-size: 0.74rem; color: var(--cream); opacity: 0.85; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+
+.reserve-split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.glass-form { display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: 20px; background: var(--glass); border: 1px solid var(--border); }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.glass-form label { display: block; font-size: 0.8rem; color: var(--cream-muted); margin-bottom: 4px; }
+.glass-form input, .glass-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.gold-btn {
+  margin-top: 6px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: var(--gold);
+  color: #14180f;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.location-box { padding: 22px; border-radius: 20px; background: var(--glass); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 14px; }
+.body-soft { color: var(--cream-muted); font-size: 0.92rem; }
+.map-wrap iframe { width: 100%; height: 230px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.14); }
+.ghost-link { color: var(--gold); text-decoration: none; font-size: 0.88rem; font-weight: 600; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal.hidden { display: none; }
+.modal-card { position: relative; width: 100%; max-width: 440px; padding: 24px; border-radius: 22px; background: #1a2115; border: 1px solid var(--gold); }
+.modal-close { position: absolute; top: 14px; inset-inline-end: 14px; background: transparent; border: none; color: var(--cream); font-size: 1.1rem; cursor: pointer; }
+
+@media (max-width: 900px) {
+  .studio-nav { position: static; width: 100%; flex-direction: row; overflow-x: auto; margin-bottom: 14px; }
+  .nav-item { white-space: nowrap; width: auto; }
+  .workspace { padding: 86px 14px 32px; }
+  .photo-stage { height: 390px; max-width: 100%; }
+  .reserve-split, .row-2 { grid-template-columns: 1fr; }
+}
