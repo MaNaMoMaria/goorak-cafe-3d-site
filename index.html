@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GOORAK | Cafe • Gallery</title>
+  <title>GOORAK — Cafe • Gallery • Atelier</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600&family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <script type="importmap">
     {
@@ -17,218 +17,162 @@
     }
   </script>
 </head>
-<body>
-  <div id="grain-overlay"></div>
+<body class="lights-off">
+  <audio id="ambient-audio" loop preload="none">
+    <source src="background-music.mp3" type="audio/mpeg" />
+  </audio>
 
-  <!-- Minimal Architectural Navigation -->
-  <header class="site-header">
-    <a href="#hero" class="brand-lockup">
-      <svg class="brand-emblem" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.6">
-        <path d="M4 34 L20 14 L32 26 L44 10 L60 34" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M29 12 C29 7, 34 6, 36 9 M33 12 L33 18 M30 15 L36 15" stroke-linecap="round"/>
-      </svg>
-      <div class="brand-text">
+  <header class="topbar">
+    <a href="#stage" class="brand-box">
+      <img src="images/logo.png" alt="GOORAK" class="brand-logo" onerror="this.style.display='none'" />
+      <div>
         <span class="brand-title">GOORAK</span>
-        <span class="brand-sub">CAFE • GALLERY</span>
+        <span class="brand-sub">CAFE • GALLERY • KANGAN</span>
       </div>
     </a>
 
-    <nav class="main-nav">
-      <a href="#atelier" data-i18n="nav_alchemy">ترکیب حال‌وهوا</a>
-      <a href="#botanicals" data-i18n="nav_menu">منوی دمنوش و کافه</a>
-      <a href="#gathering" data-i18n="nav_reserve">رزرو گالری</a>
-      <a href="#sanctuary" data-i18n="nav_visit">نشانی</a>
-    </nav>
+    <div class="top-controls">
+      <button id="light-switch-btn" class="light-btn" type="button">
+        <span id="light-icon">💡</span>
+        <span id="light-label" data-i18n="light_on">روشن کردن چراغ</span>
+      </button>
 
-    <div class="header-actions">
-      <button id="lang-toggle" class="lang-btn" aria-label="Switch Language">EN</button>
-      <a href="#botanicals" class="quick-menu-btn" data-i18n="quick_menu">منو</a>
+      <button id="sound-btn" class="icon-pill" type="button" title="Sound">♪</button>
+      <button id="lang-btn" class="icon-pill" type="button">EN</button>
     </div>
   </header>
 
-  <!-- Fixed 3D Stage -->
-  <div id="canvas-stage">
-    <canvas id="goorak-3d"></canvas>
-    <div id="cup-caption" class="cup-caption">
-      <span class="caption-step" id="step-indicator">01 / 04</span>
-      <p id="step-note" data-i18n="step_1_note">سفال دست‌ساز گرم؛ آماده برای ترکیب اختصاصی شما</p>
-    </div>
-  </div>
+  <aside class="studio-nav">
+    <button class="nav-item active" data-view="stage" type="button">
+      <span>🏛️</span>
+      <span data-i18n="nav_stage">فضای ۳بعدی و چراغ</span>
+    </button>
+    <button class="nav-item" data-view="menu" type="button">
+      <span>🍵</span>
+      <span data-i18n="nav_menu">منوی نوشیدنی و آماده</span>
+    </button>
+    <button class="nav-item" data-view="shop" type="button">
+      <span>👜</span>
+      <span data-i18n="nav_shop">فروشگاه دست‌ساز</span>
+    </button>
+    <button class="nav-item" data-view="reserve" type="button">
+      <span>🕯️</span>
+      <span data-i18n="nav_reserve">رزرو مهمانی و نشانی</span>
+    </button>
+  </aside>
 
-  <main>
-    <!-- Section 1: Hero Scrollytelling -->
-    <section id="hero" class="story-section" data-step="0" data-bg="#F3ECE1" data-ink="#241913">
-      <div class="editorial-column">
-        <p class="eyebrow" data-i18n="hero_eyebrow">فضای هنری و کافه گیاهی • بدون آشپزخانه صنعتی</p>
-        <h1 class="display-title" data-i18n="hero_title">جرعه‌ای آرامش در قلب گالری گوراک</h1>
-        <p class="lead-copy" data-i18n="hero_desc">
-          اینجا خبری از شلوغی و بوی سرخ‌کردنی نیست. هر فنجان بر پایه عصاره‌های خالص گیاهی، شکلات تلخ اصیل و کیک‌های دست‌ساز روز، دقیقاً متناسب با حال‌وهوای لحظه شما آماده می‌شود.
-        </p>
-        <div class="hero-cta-row">
-          <a href="#atelier" class="primary-link" data-i18n="hero_cta_1">ساخت نوشیدنی بر اساس حس‌وحال</a>
-          <a href="#botanicals" class="secondary-link" data-i18n="hero_cta_2">مشاهده منوی کامل</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 2: Scrollytelling Step 2 (Velvet Cocoa & Botanical Infusion) -->
-    <section class="story-section" data-step="1" data-bg="#2A1B14" data-ink="#F5EDE3">
-      <div class="editorial-column">
-        <p class="eyebrow accent-amber" data-i18n="sec2_eyebrow">پایه مخملی • شکلات تلخ و عصاره گرم</p>
-        <h2 class="section-heading" data-i18n="sec2_title">گرمای عمیق کاکائوی خالص در بافت سفال</h2>
-        <p class="lead-copy" data-i18n="sec2_desc">
-          با اسکرول، لایه شکلات داغ غلیظ یا دمنوش دم‌کشیده درون ماگ می‌نشیند. تمام ترکیبات ما از مواد اولیه خشک و عصاره‌های آماده درجه‌یک تهیه می‌شوند تا عطر واقعی گیاهان بدون تغییر حفظ شود.
-        </p>
-      </div>
-    </section>
-
-    <!-- Section 3: Interactive 3D Mood & Blend Atelier (The In-Cafe Game) -->
-    <section id="atelier" class="story-section atelier-section" data-step="2" data-bg="#3D2619" data-ink="#F7EFE6">
-      <div class="editorial-column wide-col">
-        <p class="eyebrow accent-amber" data-i18n="atelier_eyebrow">آتلیه تعاملی روی میز • انتخاب کنید و در ماگ ببینید</p>
-        <h2 class="section-heading" data-i18n="atelier_title">امروز دلتان چه حسی می‌خواهد؟</h2>
-        <p class="lead-copy" data-i18n="atelier_desc">
-          روی حال‌وهوای خودتان بزنید یا افزودنی‌های گیاهی را انتخاب کنید تا مستقیماً داخل فنجان سه‌بعدی ریخته شوند و دستور اختصاصی میز شما ساخته شود.
-        </p>
-
-        <!-- Mood Presets -->
-        <div class="mood-pills" id="mood-selector">
-          <button class="mood-btn active" data-mood="melancholy" data-i18n="mood_sad">دلگیر و نیازمند دلگرمی</button>
-          <button class="mood-btn" data-mood="anxious" data-i18n="mood_anxious">مضطرب و پرمشغله</button>
-          <button class="mood-btn" data-mood="fatigued" data-i18n="mood_tired">خسته و بی‌انرژی</button>
-          <button class="mood-btn" data-mood="focus" data-i18n="mood_focus">نیازمند تمرکز و الهام</button>
-        </div>
-
-        <!-- Custom Toppings / Botanicals (Interactive 3D Ingredients) -->
-        <div class="ingredient-toggles" id="ingredient-controls">
-          <button class="ing-chip active" data-ing="rose" data-i18n="ing_rose">+ گلبرگ گل محمدی</button>
-          <button class="ing-chip" data-ing="saffron" data-i18n="ing_saffron">+ پر زعفران خراسان</button>
-          <button class="ing-chip" data-ing="cardamom" data-i18n="ing_cardamom">+ هل سبز کوبیده</button>
-          <button class="ing-chip" data-ing="cinnamon" data-i18n="ing_cinnamon">+ چوب دارچین و پودر کاکائو</button>
-          <button class="ing-chip" data-ing="orangeBlossom" data-i18n="ing_neroli">+ شکوفه بهارنارنج</button>
-        </div>
-
-        <!-- Live Prescription Card -->
-        <div class="alchemy-result-box" id="alchemy-card">
-          <div class="result-header">
-            <span class="badge-tag" data-i18n="rx_tag">پیشنهاد اختصاصی باریستای گوراک</span>
-            <h3 id="rx-drink-name">هات‌چاکلت گل محمدی و هل</h3>
-          </div>
-          <p id="rx-benefit-text">
-            اگر امروز کمی دلگیر یا خسته‌اید، ترکیب شکلات تلخ گرم با عطر گل محمدی و هل، ترشح اندورفین را تحریک کرده و حس امنیت و نشاط ملایمی به ذهن برمی‌گرداند.
-          </p>
-          <div class="rx-footer">
-            <span id="rx-ingredients-summary">پایه: شکلات تلخ + گل محمدی</span>
-            <button id="copy-order-btn" class="order-pill-btn" data-i18n="rx_order_btn">ثبت ترکیب برای نشان دادن به باریستا</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 4: Botanical Encyclopedia & Ready-to-Serve Bakery Menu -->
-    <section id="botanicals" class="content-section" data-step="3" data-bg="#F3ECE1" data-ink="#241913">
-      <div class="container">
-        <div class="section-header-split">
-          <div>
-            <p class="eyebrow" data-i18n="menu_eyebrow">منوی سلامت‌محور و گالری</p>
-            <h2 class="section-heading" data-i18n="menu_title">دمنوش‌های تخصصی، نوشیدنی‌های گرم و شیرینی‌های آماده</h2>
-          </div>
-          <div class="menu-filters" id="menu-tabs">
-            <button class="tab-btn active" data-filter="all" data-i18n="filter_all">همه موارد</button>
-            <button class="tab-btn" data-filter="herbal" data-i18n="filter_herbal">دمنوش‌های درمانی</button>
-            <button class="tab-btn" data-filter="cocoa" data-i18n="filter_cocoa">هات‌چاکلت و قهوه</button>
-            <button class="tab-btn" data-filter="pastry" data-i18n="filter_pastry">کیک و میان‌وعده آماده</button>
-          </div>
-        </div>
-
-        <div class="menu-grid" id="menu-items-container">
-          <!-- Populated dynamically via JS for seamless bilingual switching -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 5: Gallery Event & Private Gathering Reservation -->
-    <section id="gathering" class="content-section warm-stone-bg" data-bg="#E7DDD0" data-ink="#241913">
-      <div class="container split-layout">
-        <div class="gathering-info">
-          <p class="eyebrow" data-i18n="res_eyebrow">میزبان لحظه‌های خاص شما</p>
-          <h2 class="section-heading" data-i18n="res_title">رزرو فضای گالری و دورهمی‌های صمیمی</h2>
-          <p class="lead-copy" data-i18n="res_desc">
-            فضای گرم و هنری گوراک برای برگزاری تولدهای کوچک، نشست‌های کتاب‌خوانی، ورکشاپ‌های هنری و دورهمی‌های عصرانه با پذیرایی کامل نوشیدنی‌های گیاهی و کیک‌های دست‌ساز آماده رزرو است.
-          </p>
-          <ul class="perks-list">
-            <li data-i18n="res_perk1">ظرفیت صمیمی تا ۲۵ نفر با چیدمان منعطف</li>
-            <li data-i18n="res_perk2">منوی ویژه دمنوش‌ها، هات‌چاکلت بار و فینگرفودهای سرد</li>
-            <li data-i18n="res_perk3">امکان نمایش آثار هنری و موسیقی ملایم اختصاصی</li>
-          </ul>
-        </div>
-
-        <form id="reservation-form" class="editorial-form">
-          <div class="form-row">
-            <label data-i18n="form_name">نام و نام خانوادگی</label>
-            <input type="text" id="res-name" required placeholder="مثلاً: سارا محمدی" />
-          </div>
-          <div class="form-row two-col">
-            <div>
-              <label data-i18n="form_date">تاریخ پیشنهادی</label>
-              <input type="text" id="res-date" required placeholder="مثلاً: پنج‌شنبه ۱۵ آذر - ساعت ۱۷" />
-            </div>
-            <div>
-              <label data-i18n="form_guests">تعداد مهمان‌ها</label>
-              <input type="number" id="res-guests" min="2" max="30" value="8" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <label data-i18n="form_type">نوع برنامه</label>
-            <select id="res-type">
-              <option value="تولد و دورهمی دوستانه" data-i18n="opt_bday">تولد و دورهمی دوستانه</option>
-              <option value="ایونت هنری / رونمایی" data-i18n="opt_art">ایونت هنری و نمایشگاه</option>
-              <option value="جلسه کاری / کتاب‌خوانی" data-i18n="opt_meet">جلسه کاری یا کتاب‌خوانی</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label data-i18n="form_notes">توضیحات یا نوشیدنی‌های مدنظر</label>
-            <textarea id="res-notes" rows="3" placeholder="اگر تم رنگی یا سفارش خاصی مدنظرتان است بنویسید..."></textarea>
-          </div>
-          <button type="submit" class="submit-editorial-btn" data-i18n="form_submit">ارسال درخواست رزرو در واتساپ</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- Section 6: Google Location & Social Sanctuary -->
-    <footer id="sanctuary" class="site-footer" data-bg="#1E140E" data-ink="#F3ECE1">
-      <div class="container footer-grid">
+  <main class="workspace">
+    <section id="view-stage" class="view-panel active">
+      <div class="stage-topbar">
         <div>
-          <h3 class="footer-brand">GOORAK • CAFE & GALLERY</h3>
-          <p class="footer-tagline" data-i18n="footer_desc">پناهگاهی آرام برای طعم‌های گیاهی، هنر و گفت‌وگوهای عمیق.</p>
-          <div class="social-links">
-            <a href="https://instagram.com" target="_blank" rel="noopener">Instagram (@goorak.cafegallery)</a>
-            <a id="google-maps-direct" href="https://maps.google.com/?q=Goorak+Cafe+Gallery" target="_blank" rel="noopener" data-i18n="open_gmaps">مسیریابی در Google Maps ↗</a>
-          </div>
+          <p class="eyebrow" data-i18n="stage_eyebrow">ورود به کافه و گالری گوراک</p>
+          <h1 class="stage-title" data-i18n="stage_title">چراغ را روشن کنید و وارد فضا شوید</h1>
         </div>
 
-        <div class="hours-box">
-          <h4 data-i18n="hours_title">ساعات میزبانی</h4>
-          <p data-i18n="hours_weekdays">شنبه تا چهارشنبه: ۹:۰۰ تا ۲۲:۳۰</p>
-          <p data-i18n="hours_weekend">پنج‌شنبه و جمعه: ۱۰:۰۰ تا ۲۳:۳۰</p>
-        </div>
-
-        <div class="map-frame-wrapper">
-          <!-- Replace the src URL below with the exact Google Maps Embed link of the cafe -->
-          <iframe
-            id="gmap-iframe"
-            title="Goorak Cafe Gallery Location"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.962743084751!2d51.3889736!3d35.6891975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzXCsDQxJzIxLjEiTiA1McKwMjMnMjAuMyJF!5e0!3m2!1sen!2s!4v1700000000000"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
+        <div class="mood-pills">
+          <button class="mood-btn active" data-mood="rose" data-i18n="mood_rose">گل محمدی و شکلات</button>
+          <button class="mood-btn" data-mood="saffron" data-i18n="mood_saffron">زعفران و هل</button>
+          <button class="mood-btn" data-mood="neroli" data-i18n="mood_neroli">بهارنارنج آرامش</button>
         </div>
       </div>
-    </footer>
+
+      <div id="webgl-wrap" class="webgl-wrap">
+        <canvas id="goorak-canvas"></canvas>
+        <div class="stage-overlay-hint">
+          <span data-i18n="stage_hint">روی چراغ آویز کلیک کنید یا صحنه را با ماوس/لمس بچرخانید</span>
+        </div>
+      </div>
+
+      <div class="carousel-strip">
+        <div class="carousel-track" id="carousel-track"></div>
+      </div>
+    </section>
+
+    <section id="view-menu" class="view-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow" data-i18n="menu_eyebrow">منوی QR روی میز</p>
+          <h2 data-i18n="menu_title">نوشیدنی‌ها، دمنوش‌ها و آیتم‌های آماده</h2>
+        </div>
+        <div class="chips" id="menu-chips">
+          <button class="chip active" data-filter="all" data-i18n="all">همه</button>
+          <button class="chip" data-filter="infusion" data-i18n="f_infusion">دمنوش و خواص</button>
+          <button class="chip" data-filter="cocoa" data-i18n="f_cocoa">هات‌چاکلت و قهوه</button>
+          <button class="chip" data-filter="ready" data-i18n="f_ready">کیک و آماده</button>
+        </div>
+      </div>
+      <div id="menu-grid" class="cards-grid"></div>
+    </section>
+
+    <section id="view-shop" class="view-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow" data-i18n="shop_eyebrow">گالری و بوتیک دست‌ساز</p>
+          <h2 data-i18n="shop_title">لباس، کیف و کفش دست‌ساز</h2>
+        </div>
+        <div class="chips" id="shop-chips">
+          <button class="chip active" data-shop="all" data-i18n="all">همه</button>
+          <button class="chip" data-shop="clothes" data-i18n="s_clothes">لباس</button>
+          <button class="chip" data-shop="bags" data-i18n="s_bags">کیف</button>
+          <button class="chip" data-shop="shoes" data-i18n="s_shoes">کفش</button>
+        </div>
+      </div>
+      <div id="shop-grid" class="cards-grid"></div>
+    </section>
+
+    <section id="view-reserve" class="view-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow" data-i18n="res_eyebrow">میزبان دورهمی‌های خاص</p>
+          <h2 data-i18n="res_title">رزرو مهمانی و نشانی گوراک</h2>
+        </div>
+      </div>
+
+      <div class="reserve-split">
+        <form id="party-form" class="glass-form">
+          <label data-i18n="lbl_name">نام شما</label>
+          <input id="p-name" type="text" required />
+
+          <div class="row-2">
+            <div>
+              <label data-i18n="lbl_date">تاریخ و ساعت</label>
+              <input id="p-date" type="text" required />
+            </div>
+            <div>
+              <label data-i18n="lbl_guests">تعداد مهمان</label>
+              <input id="p-guests" type="number" min="2" max="50" value="10" required />
+            </div>
+          </div>
+
+          <label data-i18n="lbl_notes">نوع مهمانی یا سفارش</label>
+          <textarea id="p-notes" rows="3"></textarea>
+
+          <button type="submit" class="gold-btn" data-i18n="btn_wa">ارسال درخواست رزرو در واتساپ</button>
+        </form>
+
+        <div class="location-box">
+          <p class="body-soft" data-i18n="loc_desc">کنگان • کافه، گالری هنری و بوتیک دست‌ساز گوراک</p>
+          <div class="map-wrap">
+            <iframe
+              id="gmap-embed"
+              title="Goorak Cafe Gallery Google Map"
+              src="https://www.google.com/maps?q=Kangan,Bushehr&output=embed"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+          <a id="gmap-link" href="https://maps.google.com/?q=Kangan,Bushehr" target="_blank" rel="noopener" class="ghost-link" data-i18n="open_maps">باز کردن در گوگل مپ ↗</a>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- Toast Notification -->
-  <div id="toast-msg" class="toast-msg"></div>
+  <div id="detail-modal" class="modal hidden" onclick="if(event.target===this) closeDetailModal()">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeDetailModal()" type="button">✕</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
 
   <script type="module" src="app.js"></script>
 </body>
