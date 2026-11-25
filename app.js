@@ -1,477 +1,333 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-const WHATSAPP_NUMBER = "989120000000";
-
-const I18N = {
-  fa: {
-    light_on: "روشن کردن چراغ",
-    light_off: "خاموش کردن چراغ",
-    nav_stage: "فضای ۳بعدی و چراغ",
-    nav_menu: "منوی نوشیدنی و آماده",
-    nav_shop: "فروشگاه دست‌ساز",
-    nav_reserve: "رزرو مهمانی و نشانی",
-    stage_eyebrow: "ورود به کافه و گالری گوراک",
-    stage_title: "چراغ را روشن کنید و وارد فضا شوید",
-    mood_rose: "گل محمدی و شکلات",
-    mood_saffron: "زعفران و هل",
-    mood_neroli: "بهارنارنج آرامش",
-    stage_hint: "روی چراغ آویز کلیک کنید یا صحنه را با ماوس/لمس بچرخانید",
-    menu_eyebrow: "منوی QR روی میز",
-    menu_title: "نوشیدنی‌ها، دمنوش‌ها و آیتم‌های آماده",
-    all: "همه",
-    f_infusion: "دمنوش و خواص",
-    f_cocoa: "هات‌چاکلت و قهوه",
-    f_ready: "کیک و آماده",
-    shop_eyebrow: "گالری و بوتیک دست‌ساز",
-    shop_title: "لباس، کیف و کفش دست‌ساز",
-    s_clothes: "لباس",
-    s_bags: "کیف",
-    s_shoes: "کفش",
-    res_eyebrow: "میزبان دورهمی‌های خاص",
-    res_title: "رزرو مهمانی و نشانی گوراک",
-    lbl_name: "نام شما",
-    lbl_date: "تاریخ و ساعت",
-    lbl_guests: "تعداد مهمان",
-    lbl_notes: "نوع مهمانی یا سفارش",
-    btn_wa: "ارسال درخواست رزرو در واتساپ",
-    loc_desc: "کنگان • کافه، گالری هنری و بوتیک دست‌ساز گوراک",
-    open_maps: "باز کردن در گوگل مپ ↗"
-  },
-  en: {
-    light_on: "Turn Light On",
-    light_off: "Turn Light Off",
-    nav_stage: "3D Space & Lamp",
-    nav_menu: "Drinks & Ready Menu",
-    nav_shop: "Handmade Boutique",
-    nav_reserve: "Party Booking & Map",
-    stage_eyebrow: "ENTER GOORAK CAFE & GALLERY",
-    stage_title: "Switch on the Lamp & Step Inside",
-    mood_rose: "Rose & Dark Cocoa",
-    mood_saffron: "Saffron & Cardamom",
-    mood_neroli: "Neroli Calm",
-    stage_hint: "Click the pendant lamp or drag to orbit",
-    menu_eyebrow: "TABLE QR MENU",
-    menu_title: "Infusions, Warm Drinks & Ready Bites",
-    all: "All",
-    f_infusion: "Herbal & Benefits",
-    f_cocoa: "Cocoa & Coffee",
-    f_ready: "Ready Pastries",
-    shop_eyebrow: "GALLERY BOUTIQUE",
-    shop_title: "Handmade Apparel, Bags & Shoes",
-    s_clothes: "Apparel",
-    s_bags: "Bags",
-    s_shoes: "Shoes",
-    res_eyebrow: "PRIVATE GATHERINGS",
-    res_title: "Party Booking & Goorak Location",
-    lbl_name: "Your Name",
-    lbl_date: "Date & Time",
-    lbl_guests: "Guests",
-    lbl_notes: "Event Type or Notes",
-    btn_wa: "Send Booking via WhatsApp",
-    loc_desc: "Kangan • Goorak Cafe, Art Gallery & Handmade Boutique",
-    open_maps: "Open in Google Maps ↗"
-  }
-};
-
-const MOODS = {
-  rose: { liquid: 0x3a1c11 },
-  saffron: { liquid: 0xb57624 },
-  neroli: { liquid: 0x7b6336 }
-};
-
-const SHOWCASE_CARDS = [
-  { tagFa: "نوشیدنی حال‌خوب", tagEn: "Mood Drink", titleFa: "هات‌چاکلت گل محمدی", titleEn: "Rose Hot Cocoa", descFa: "دلگرم‌کننده برای روزهای گرفته و خسته.", descEn: "Warming cocoa for low-energy days." },
-  { tagFa: "دم‌نوش گیاهی", tagEn: "Botanical Tea", titleFa: "بهارنارنج و گل سرخ", titleEn: "Neroli & Rose", descFa: "آرام‌بخش اعصاب و خواب سبک.", descEn: "Soothing floral infusion." },
-  { tagFa: "بوتیک دست‌ساز", tagEn: "Handmade Apparel", titleFa: "مانتو و شال کتان دست‌دوز", titleEn: "Hand-Stitched Linen Coat", descFa: "دوخت محدود در رنگ‌های زیتونی و کرم.", descEn: "Small-batch olive & cream linen." },
-  { tagFa: "کیف و کفش", tagEn: "Bags & Footwear", titleFa: "کیف دوشی و کفش چرم/کنف", titleEn: "Craft Bag & Shoes", descFa: "ساخت دست؛ قابل سفارش و خرید در گالری.", descEn: "Handcrafted pieces in the gallery." }
-];
-
-const MENU_ITEMS = [
-  {
-    cat: "cocoa",
-    priceFa: "۱۶۵ هزار",
-    priceEn: "$5.50",
-    titleFa: "هات‌چاکلت گل محمدی و هل",
-    titleEn: "Rose & Cardamom Hot Cocoa",
-    descFa: "اگر امروز کمی دلگیر یا خسته‌اید، ترکیب شکلات تلخ گرم با گل محمدی روحیه را لطیف و گرم می‌کند.",
-    descEn: "Lifts low moods with warm dark cocoa, Damask rose, and cardamom.",
-    metaFa: "خواص: نشاط‌آور • آرام‌بخش روحی",
-    metaEn: "Benefits: Mood-lifting • Comforting"
-  },
-  {
-    cat: "infusion",
-    priceFa: "۱۴۰ هزار",
-    priceEn: "$4.50",
-    titleFa: "دم‌نوش بهارنارنج و بادرنجبویه",
-    titleEn: "Orange Blossom & Lemon Balm",
-    descFa: "تهیه شده از گیاهان خشک آماده؛ کمک به کاهش اضطراب و آرامش ذهنی بدون آشپزخانه.",
-    descEn: "Prepared from dried botanicals to ease tension calmly.",
-    metaFa: "خواص: ضد استرس • بدون کافئین",
-    metaEn: "Benefits: Stress relief • Caffeine-free"
-  },
-  {
-    cat: "infusion",
-    priceFa: "۱۵۵ هزار",
-    priceEn: "$5.00",
-    titleFa: "دم‌نوش زعفران و سیب خشک",
-    titleEn: "Saffron & Dried Apple Tea",
-    descFa: "گرم‌کننده ملایم و خوش‌عطر برای تقویت خلق‌وخو و همراهی با فضای گالری.",
-    descEn: "Warming botanical infusion with saffron and dried apple.",
-    metaFa: "خواص: انرژی‌بخش ملایم • آنتی‌اکسیدان",
-    metaEn: "Benefits: Gentle vitality • Antioxidant"
-  },
-  {
-    cat: "ready",
-    priceFa: "۱۴۵ هزار",
-    priceEn: "$4.80",
-    titleFa: "کیک دست‌ساز آماده سرو",
-    titleEn: "Ready-to-Serve Artisan Cake",
-    descFa: "پخت روزِ کارگاه همکار؛ سرو آماده و تمیز در کنار نوشیدنی.",
-    descEn: "Fresh daily pastry prepared off-site, ready to serve.",
-    metaFa: "سرو آماده • بدون پخت در محل",
-    metaEn: "Ready to serve • No kitchen cooking"
-  }
-];
-
-const SHOP_ITEMS = [
-  {
-    cat: "clothes",
-    priceFa: "۱,۸۵۰ هزار",
-    priceEn: "$32",
-    titleFa: "پیراهن و مانتو کتان دست‌دوز",
-    titleEn: "Handcrafted Linen Overshirt",
-    descFa: "دوخت دست با پارچه تنفس‌پذیر در رنگ زیتونی و بژ.",
-    descEn: "Hand-finished breathable linen in olive & cream.",
-    metaFa: "دست‌دوز • موجود در گالری",
-    metaEn: "Handmade • In Gallery"
-  },
-  {
-    cat: "bags",
-    priceFa: "۱,۲۵۰ هزار",
-    priceEn: "$22",
-    titleFa: "کیف دوشی دست‌ساز گالری",
-    titleEn: "Artisan Gallery Shoulder Bag",
-    descFa: "ترکیب بافت کنفی و یراق تمیز مناسب استفاده روزمره.",
-    descEn: "Woven craft texture suited for daily carry.",
-    metaFa: "دست‌ساز • تک‌نسخه / محدود",
-    metaEn: "Handmade • Limited Run"
-  },
-  {
-    cat: "shoes",
-    priceFa: "۱,۶۵۰ هزار",
-    priceEn: "$29",
-    titleFa: "کفش راحت دست‌دوز",
-    titleEn: "Hand-Stitched Comfort Shoes",
-    descFa: "زیره نرم و قالب راحت برای قدم زدن در کافه و گالری.",
-    descEn: "Soft sole and comfortable fit for gallery strolls.",
-    metaFa: "دست‌ساز • سایزبندی محدود",
-    metaEn: "Handmade • Limited Sizes"
-  }
-];
-
-let lang = "fa";
-let lampOn = false;
-let activeMood = "rose";
-let menuFilter = "all";
-let shopFilter = "all";
-
-function applyI18n() {
-  document.documentElement.lang = lang;
-  document.documentElement.dir = lang === "fa" ? "rtl" : "ltr";
-  document.getElementById("lang-btn").textContent = lang === "fa" ? "EN" : "فا";
-
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.dataset.i18n;
-    if (I18N[lang][key]) el.textContent = I18N[lang][key];
-  });
-
-  document.getElementById("light-label").textContent = lampOn ? I18N[lang].light_off : I18N[lang].light_on;
-  renderShowcase();
-  renderMenu();
-  renderShop();
+:root {
+  --bg: #12150f;
+  --olive-mid: #3d4a31;
+  --cream: #E8DEC8;
+  --cream-muted: rgba(232, 222, 200, 0.74);
+  --gold: #D4AF37;
+  --glass: rgba(20, 24, 16, 0.78);
+  --border: rgba(212, 175, 55, 0.34);
+  --glow: rgba(255, 196, 112, 0.08);
+  --font-fa: 'Vazirmatn', sans-serif;
+  --font-en-display: 'Cormorant Garamond', Georgia, serif;
+  --font-en-body: 'Plus Jakarta Sans', sans-serif;
 }
 
-function renderShowcase() {
-  const track = document.getElementById("carousel-track");
-  track.innerHTML = "";
-  SHOWCASE_CARDS.forEach(c => {
-    const card = document.createElement("div");
-    card.className = "showcase-card";
-    card.innerHTML = `
-      <span class="tag">${lang === "fa" ? c.tagFa : c.tagEn}</span>
-      <h3>${lang === "fa" ? c.titleFa : c.titleEn}</h3>
-      <p>${lang === "fa" ? c.descFa : c.descEn}</p>
-    `;
-    card.addEventListener("click", () => {
-      openDetailModal(`
-        <h3 style="color:#D4AF37;margin-bottom:8px;">${lang === "fa" ? c.titleFa : c.titleEn}</h3>
-        <p style="font-size:0.9rem;line-height:1.7;">${lang === "fa" ? c.descFa : c.descEn}</p>
-      `);
-    });
-    track.appendChild(card);
-  });
+body.mood-cool    { --glow: rgba(245, 185, 95, 0.14); }
+body.mood-saffron { --glow: rgba(245, 166, 56, 0.14); }
+body.mood-rose    { --glow: rgba(224, 130, 120, 0.12); }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 65% 28%, #2e3a24 0%, #151a11 65%, #0c0f0a 100%);
+  color: var(--cream);
+  font-family: var(--font-fa);
+  overflow-x: hidden;
+  transition: background 0.6s ease;
 }
 
-function renderMenu() {
-  const wrap = document.getElementById("menu-grid");
-  wrap.innerHTML = "";
-  const list = menuFilter === "all" ? MENU_ITEMS : MENU_ITEMS.filter(i => i.cat === menuFilter);
-  list.forEach(item => {
-    const el = document.createElement("article");
-    el.className = "item-card";
-    el.innerHTML = `
-      <div>
-        <div class="item-top">
-          <h3 class="item-title">${lang === "fa" ? item.titleFa : item.titleEn}</h3>
-          <span class="item-price">${lang === "fa" ? item.priceFa : item.priceEn}</span>
-        </div>
-        <p class="item-desc">${lang === "fa" ? item.descFa : item.descEn}</p>
-      </div>
-      <div class="item-meta">${lang === "fa" ? item.metaFa : item.metaEn}</div>
-    `;
-    wrap.appendChild(el);
-  });
+body.lights-on {
+  background: radial-gradient(circle at 65% 25%, #4d5d3d 0%, #2c3723 58%, #1a2114 100%);
+  --glow: rgba(255, 204, 120, 0.34);
 }
 
-function renderShop() {
-  const wrap = document.getElementById("shop-grid");
-  wrap.innerHTML = "";
-  const list = shopFilter === "all" ? SHOP_ITEMS : SHOP_ITEMS.filter(i => i.cat === shopFilter);
-  list.forEach(item => {
-    const el = document.createElement("article");
-    el.className = "item-card";
-    el.innerHTML = `
-      <div>
-        <div class="item-top">
-          <h3 class="item-title">${lang === "fa" ? item.titleFa : item.titleEn}</h3>
-          <span class="item-price">${lang === "fa" ? item.priceFa : item.priceEn}</span>
-        </div>
-        <p class="item-desc">${lang === "fa" ? item.descFa : item.descEn}</p>
-      </div>
-      <div class="item-meta">${lang === "fa" ? item.metaFa : item.metaEn}</div>
-    `;
-    el.addEventListener("click", () => {
-      const title = lang === "fa" ? item.titleFa : item.titleEn;
-      const msg = encodeURIComponent(`سلام، درباره سفارش آیتم دست‌ساز «${title}» در گالری گوراک سوال دارم.`);
-      openDetailModal(`
-        <h3 style="color:#D4AF37;margin-bottom:8px;">${title}</h3>
-        <p style="font-size:0.88rem;margin-bottom:14px;">${lang === "fa" ? item.descFa : item.descEn}</p>
-        <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${msg}" target="_blank" rel="noopener" style="display:inline-block;padding:10px 16px;border-radius:12px;background:#D4AF37;color:#14180f;font-weight:700;text-decoration:none;font-size:0.85rem;">سفارش / استعلام در واتساپ</a>
-      `);
-    });
-    wrap.appendChild(el);
-  });
+html[lang="en"] body { font-family: var(--font-en-body); }
+html[lang="en"] h1, html[lang="en"] h2, html[lang="en"] .brand-title { font-family: var(--font-en-display); }
+
+.topbar {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 60;
+  height: 72px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
 }
 
-window.openDetailModal = function(html) {
-  document.getElementById("modal-body").innerHTML = html;
-  document.getElementById("detail-modal").classList.remove("hidden");
-};
+.brand-box { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--cream); }
+.brand-logo { width: 38px; height: 38px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); }
+.brand-title { display: block; font-weight: 800; letter-spacing: 0.16em; font-size: 1rem; line-height: 1.1; }
+.brand-sub { display: block; font-size: 0.62rem; letter-spacing: 0.18em; color: var(--gold); margin-top: 2px; }
 
-window.closeDetailModal = function() {
-  document.getElementById("detail-modal").classList.add("hidden");
-};
+.top-controls { display: flex; align-items: center; gap: 10px; }
 
-document.querySelectorAll(".nav-item").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    const view = btn.dataset.view;
-    document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
-    document.getElementById(`view-${view}`).classList.add("active");
-  });
-});
-
-document.querySelectorAll("#menu-chips .chip").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll("#menu-chips .chip").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    menuFilter = btn.dataset.filter;
-    renderMenu();
-  });
-});
-
-document.querySelectorAll("#shop-chips .chip").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll("#shop-chips .chip").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    shopFilter = btn.dataset.shop;
-    renderShop();
-  });
-});
-
-document.getElementById("lang-btn").addEventListener("click", () => {
-  lang = lang === "fa" ? "en" : "fa";
-  applyI18n();
-});
-
-const audioEl = document.getElementById("ambient-audio");
-document.getElementById("sound-btn").addEventListener("click", () => {
-  if (audioEl.paused) {
-    audioEl.play().catch(() => {});
-    document.getElementById("sound-btn").style.borderColor = "#D4AF37";
-  } else {
-    audioEl.pause();
-    document.getElementById("sound-btn").style.borderColor = "";
-  }
-});
-
-document.getElementById("party-form").addEventListener("submit", e => {
-  e.preventDefault();
-  const name = document.getElementById("p-name").value;
-  const date = document.getElementById("p-date").value;
-  const guests = document.getElementById("p-guests").value;
-  const notes = document.getElementById("p-notes").value;
-  const text = encodeURIComponent(`رزرو مهمانی گوراک:\nنام: ${name}\nتاریخ: ${date}\nتعداد: ${guests}\nتوضیحات: ${notes || "-"}`);
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
-});
-
-const canvas = document.getElementById("goorak-canvas");
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(36, canvas.clientWidth / canvas.clientHeight, 0.1, 60);
-camera.position.set(0, 1.9, 5.2);
-
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
-controls.enableZoom = false;
-controls.enablePan = false;
-controls.autoRotate = true;
-controls.autoRotateSpeed = 0.65;
-
-const ambient = new THREE.AmbientLight(0xd8e0cc, 0.25);
-scene.add(ambient);
-
-const pendantLight = new THREE.PointLight(0xffb85c, 0, 14, 1.5);
-pendantLight.position.set(0, 1.45, 0);
-pendantLight.castShadow = true;
-scene.add(pendantLight);
-
-const cord = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.015, 0.015, 1.4, 16),
-  new THREE.MeshStandardMaterial({ color: 0x262626, roughness: 0.7 })
-);
-cord.position.set(0, 2.25, 0);
-scene.add(cord);
-
-const shadeMat = new THREE.MeshStandardMaterial({ color: 0x8c5b34, roughness: 0.65, side: THREE.DoubleSide });
-const shade = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.52, 0.42, 32, 1, true), shadeMat);
-shade.position.set(0, 1.52, 0);
-scene.add(shade);
-
-const bulbMat = new THREE.MeshStandardMaterial({
-  color: 0xfff0cc,
-  emissive: 0xffaa33,
-  emissiveIntensity: 0.05,
-  roughness: 0.2
-});
-const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 20), bulbMat);
-bulb.position.set(0, 1.42, 0);
-scene.add(bulb);
-
-const table = new THREE.Mesh(
-  new THREE.CylinderGeometry(2.1, 1.95, 0.14, 64),
-  new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.55 })
-);
-table.position.y = -0.85;
-table.receiveShadow = true;
-scene.add(table);
-
-const cupGroup = new THREE.Group();
-cupGroup.position.set(-0.45, -0.78, 0.15);
-scene.add(cupGroup);
-
-const mugPts = [
-  new THREE.Vector2(0, 0),
-  new THREE.Vector2(0.55, 0),
-  new THREE.Vector2(0.68, 0.95),
-  new THREE.Vector2(0.62, 0.95),
-  new THREE.Vector2(0.49, 0.12),
-  new THREE.Vector2(0, 0.12)
-];
-const mugMat = new THREE.MeshPhysicalMaterial({ color: 0xe8dec8, roughness: 0.35, clearcoat: 0.3 });
-const mug = new THREE.Mesh(new THREE.LatheGeometry(mugPts, 48), mugMat);
-mug.castShadow = true;
-cupGroup.add(mug);
-
-const liquidMat = new THREE.MeshPhysicalMaterial({ color: MOODS.rose.liquid, roughness: 0.15, clearcoat: 0.85 });
-const liquid = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.56, 0.06, 48), liquidMat);
-liquid.position.y = 0.72;
-cupGroup.add(liquid);
-
-const galleryPiece = new THREE.Mesh(
-  new THREE.BoxGeometry(0.68, 0.68, 0.68),
-  new THREE.MeshStandardMaterial({ color: 0x3d4a31, roughness: 0.5, metalness: 0.08 })
-);
-galleryPiece.position.set(0.68, -0.44, -0.1);
-galleryPiece.rotation.y = 0.4;
-galleryPiece.castShadow = true;
-scene.add(galleryPiece);
-
-function setLampState(state) {
-  lampOn = state;
-  document.body.classList.toggle("lights-on", lampOn);
-  document.getElementById("light-label").textContent = lampOn ? I18N[lang].light_off : I18N[lang].light_on;
+.light-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--gold);
+  background: rgba(212, 175, 55, 0.14);
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-document.getElementById("light-switch-btn").addEventListener("click", () => setLampState(!lampOn));
-
-const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2();
-canvas.addEventListener("click", e => {
-  const rect = canvas.getBoundingClientRect();
-  pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-  pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObjects([shade, bulb]);
-  if (hits.length > 0) setLampState(!lampOn);
-});
-
-let targetLiquid = new THREE.Color(MOODS.rose.liquid);
-document.querySelectorAll(".mood-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    activeMood = btn.dataset.mood;
-    targetLiquid.setHex(MOODS[activeMood].liquid);
-  });
-});
-
-function resize() {
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
-  if (canvas.width !== w || canvas.height !== h) {
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
+body.lights-on .light-btn {
+  background: var(--gold);
+  color: #14170f;
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.45);
 }
 
-const clock = new THREE.Clock();
-function animate() {
-  requestAnimationFrame(animate);
-  resize();
-  const t = clock.getElapsedTime();
-
-  const targetIntensity = lampOn ? 9.5 : 0;
-  const targetAmbient = lampOn ? 0.95 : 0.25;
-  const targetEmissive = lampOn ? 2.2 : 0.05;
-
-  pendantLight.intensity += (targetIntensity - pendantLight.intensity) * 0.08;
-  ambient.intensity += (targetAmbient - ambient.intensity) * 0.08;
-  bulbMat.emissiveIntensity += (targetEmissive - bulbMat.emissiveIntensity) * 0.08;
-
-  liquidMat.color.lerp(targetLiquid, 0.07);
-  cupGroup.position.y = -0.78 + Math.sin(t * 1.4) * 0.015;
-
-  controls.update();
-  renderer.render(scene, camera);
+.icon-pill {
+  padding: 8px 13px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-applyI18n();
-animate();
+.studio-nav {
+  position: fixed;
+  top: 92px;
+  inset-inline-start: 20px;
+  z-index: 50;
+  width: 215px;
+  padding: 14px;
+  border-radius: 20px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: start;
+  transition: all 0.22s ease;
+}
+
+.nav-item.active, .nav-item:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: var(--gold);
+}
+
+.workspace {
+  padding: 92px 24px 40px;
+  padding-inline-start: 256px;
+}
+
+.view-panel { display: none; animation: fadeIn 0.35s ease; }
+.view-panel.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stage-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.eyebrow { font-size: 0.75rem; letter-spacing: 0.14em; color: var(--gold); margin-bottom: 4px; }
+.stage-title, .panel-head h2 { font-size: clamp(1.4rem, 2.4vw, 2.1rem); font-weight: 700; }
+
+.mood-pills, .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.mood-btn, .chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mood-btn.active, .chip.active {
+  background: var(--gold);
+  color: #151810;
+  border-color: var(--gold);
+  font-weight: 700;
+}
+
+/* Stage Video / Photo */
+.photo-stage {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  height: 460px;
+  margin-inline: auto;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.stage-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.76) contrast(1.05);
+  transition: filter 0.6s ease;
+}
+
+body.lights-on .stage-media {
+  filter: brightness(1.04) contrast(1.08);
+}
+
+.lamp-glow-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 42%, var(--glow), rgba(10, 13, 8, 0.45) 78%);
+  transition: background 0.6s ease;
+}
+
+.stage-caption-bar {
+  position: absolute;
+  bottom: 16px;
+  inset-inline: 18px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(16, 20, 13, 0.82);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(232, 222, 200, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stage-caption-bar strong { color: var(--gold); font-size: 0.94rem; }
+.stage-caption-bar span { color: var(--cream-muted); font-size: 0.82rem; }
+
+.carousel-strip { margin-top: 22px; }
+.carousel-track { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+
+.showcase-card {
+  border-radius: 18px;
+  padding: 14px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.showcase-card:hover { transform: translateY(-4px); border-color: var(--cream); }
+.showcase-card .tag { font-size: 0.7rem; color: var(--gold); display: block; margin-bottom: 4px; }
+.showcase-card h3 { font-size: 0.96rem; margin-bottom: 4px; }
+.showcase-card p { font-size: 0.78rem; color: var(--cream-muted); }
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; }
+
+.item-card {
+  border-radius: 20px;
+  padding: 18px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+.item-card:hover { transform: translateY(-3px); border-color: var(--cream); }
+.item-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.item-title { font-size: 1rem; font-weight: 700; }
+.item-price { font-size: 0.88rem; color: var(--gold); font-weight: 700; white-space: nowrap; }
+.item-desc { font-size: 0.84rem; color: var(--cream-muted); margin-top: 6px; }
+.item-meta { font-size: 0.74rem; color: var(--cream); opacity: 0.85; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+
+.reserve-split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.glass-form { display: flex; flex-direction: column; gap: 12px; padding: 22px; border-radius: 20px; background: var(--glass); border: 1px solid var(--border); }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.glass-form label { display: block; font-size: 0.8rem; color: var(--cream-muted); margin-bottom: 4px; }
+.glass-form input, .glass-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.gold-btn {
+  margin-top: 6px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  background: var(--gold);
+  color: #14180f;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.location-box { padding: 22px; border-radius: 20px; background: var(--glass); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 14px; }
+.body-soft { color: var(--cream-muted); font-size: 0.92rem; }
+.map-wrap iframe { width: 100%; height: 230px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.14); }
+.ghost-link { color: var(--gold); text-decoration: none; font-size: 0.88rem; font-weight: 600; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal.hidden { display: none; }
+.modal-card { position: relative; width: 100%; max-width: 440px; padding: 24px; border-radius: 22px; background: #1a2115; border: 1px solid var(--gold); }
+.modal-close { position: absolute; top: 14px; inset-inline-end: 14px; background: transparent; border: none; color: var(--cream); font-size: 1.1rem; cursor: pointer; }
+
+@media (max-width: 900px) {
+  .studio-nav { position: static; width: 100%; flex-direction: row; overflow-x: auto; margin-bottom: 14px; }
+  .nav-item { white-space: nowrap; width: auto; }
+  .workspace { padding: 86px 14px 32px; }
+  .photo-stage { height: 390px; max-width: 100%; }
+  .reserve-split, .row-2 { grid-template-columns: 1fr; }
+}
