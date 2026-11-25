@@ -8,16 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
 </head>
-<body class="lights-off">
+<body class="lights-off mood-rose">
   <audio id="ambient-audio" loop preload="none">
     <source src="background-music.mp3" type="audio/mpeg" />
   </audio>
@@ -45,7 +37,7 @@
   <aside class="studio-nav">
     <button class="nav-item active" data-view="stage" type="button">
       <span>🏛️</span>
-      <span data-i18n="nav_stage">فضای ۳بعدی و چراغ</span>
+      <span data-i18n="nav_stage">فضای کافه و چراغ</span>
     </button>
     <button class="nav-item" data-view="menu" type="button">
       <span>🍵</span>
@@ -76,10 +68,18 @@
         </div>
       </div>
 
-      <div id="webgl-wrap" class="webgl-wrap">
-        <canvas id="goorak-canvas"></canvas>
-        <div class="stage-overlay-hint">
-          <span data-i18n="stage_hint">روی چراغ آویز کلیک کنید یا صحنه را با ماوس/لمس بچرخانید</span>
+      <!-- Real Photo Stage with Interactive Lamp Glow -->
+      <div id="photo-stage" class="photo-stage" title="Click to toggle lamp">
+        <img
+          src="images/cafe-stage.jpg"
+          alt="GOORAK Cafe and Gallery"
+          class="stage-photo"
+          onerror="this.src='https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1400&q=80'"
+        />
+        <div class="lamp-glow-layer"></div>
+        <div class="stage-caption-bar">
+          <strong id="stage-mood-title">هات‌چاکلت گل محمدی</strong>
+          <span id="stage-mood-desc">دلگرم‌کننده برای عصرهای آرام و گفت‌وگو در گالری.</span>
         </div>
       </div>
 
